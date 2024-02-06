@@ -47,7 +47,7 @@ resource "aws_route_table" "main" {
 resource "aws_eip" "nat" {
   # Specify the appropriate attributes for the Elastic IP resource
   # For example:
-#   vpc = true
+  vpc = true
 }
 
 
