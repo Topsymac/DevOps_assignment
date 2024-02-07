@@ -12,8 +12,8 @@ resource "aws_subnet" "private" {
   count             = length(var.subnet_cidr_blocks)
   vpc_id            = aws_vpc.main.id
   cidr_block        = var.subnet_cidr_blocks[count.index]
-  availability_zone = "us-east-1a"  # Change to your desired AZ
-
+  availability_zone = element(var.availability_zones, count.index)  # Change to your desired AZ
+  
   tags = {
     Name = "PrivateSubnet-${count.index}"
   }
@@ -47,7 +47,7 @@ resource "aws_route_table" "main" {
 resource "aws_eip" "nat" {
   # Specify the appropriate attributes for the Elastic IP resource
   # For example:
-#   vpc = true
+  vpc = true
 }
 
 
@@ -71,7 +71,7 @@ resource "aws_route" "nat_gateway" {
 # Associate subnets with route table
 resource "aws_route_table_association" "private" {
   count          = length(var.subnet_cidr_blocks)
-  subnet_id      = aws_subnet.private[count.index].id
+  subnet_id      = aws_subnet.private[0].id
   route_table_id = aws_route_table.main.id
 }
 

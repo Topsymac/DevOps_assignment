@@ -8,9 +8,15 @@ variable "subnet_cidr_blocks" {
   type        = list(string)
 }
 
+variable "availability_zones" {
+  description = "List of availability zones for subnets"
+  type        = list(string)
+  default     = ["us-east-1a", "us-east-1b"]  # Adjust with your desired AZs
+}
+
 # variable "vpc_cidr_block"  {
 #     default = "10.0.0.0/16"
-# } 
+# }  a
 # variable "region" {
 #     default = "us-east-1"
 # }
