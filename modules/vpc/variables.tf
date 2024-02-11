@@ -11,8 +11,20 @@ variable "subnet_cidr_blocks" {
 variable "availability_zones" {
   description = "List of availability zones for subnets"
   type        = list(string)
-  default     = ["us-east-1a", "us-east-1b"]  # Adjust with your desired AZs
+  # remove this line and add the variables like you did in subnets, this way user just needs to change the outer code variables instead of going inside the variables under the vpc module
+  # add providers.tf and add variables in variables.tf for outer main.tf
+ # Adjust with your desired AZs
 }
+variable "public_subnet_cidr" {
+  description  = "Public subnet"
+  type         = string
+}
+
+variable "availability_zone_pub"{
+  description   = "Public subnet availability zone"
+  type          = string
+}
+
 
 # variable "vpc_cidr_block"  {
 #     default = "10.0.0.0/16"

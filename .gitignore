@@ -8,8 +8,8 @@
 
 # .tfstate files
 *.tfstate
-.tfstate.
-.terraform.tfstate.backup
+terraform.tfstate.
+terraform.tfstate.backup
 
 # Crash log files
 crash.log
@@ -40,3 +40,5 @@ override.tf.json
 terraform.rc
 
 # End of https://www.toptal.com/developers/gitignore/api/terraform
+
+.vscode

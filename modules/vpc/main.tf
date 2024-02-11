@@ -1,4 +1,3 @@
-# Create VPC
 resource "aws_vpc" "main" {
   cidr_block = var.vpc_cidr_block
 
@@ -7,7 +6,7 @@ resource "aws_vpc" "main" {
   }
 }
 
-# Create subnets
+# Create Private subnets
 resource "aws_subnet" "private" {
   count             = length(var.subnet_cidr_blocks)
   vpc_id            = aws_vpc.main.id
@@ -19,42 +18,30 @@ resource "aws_subnet" "private" {
   }
 }
 
-# Create internet gateway
-resource "aws_internet_gateway" "main" {
-  vpc_id = aws_vpc.main.id
-
-  tags = {
-    Name = "InternetGateway"
-  }
-}
-
 # Create route table
+
 resource "aws_route_table" "main" {
   vpc_id = aws_vpc.main.id
 
   tags = {
     Name = "MainRouteTable"
   }
+
 }
 
-# Create local route in route table
-# resource "aws_route" "local" {
-#   route_table_id         = aws_route_table.main.id
-#   destination_cidr_block = aws_vpc.main.cidr_block
-#   gateway_id             = "local"
-# }
-# Declare Elastic IP resource
-resource "aws_eip" "nat" {
-  # Specify the appropriate attributes for the Elastic IP resource
-  # For example:
-  vpc = true
+# Associate subnets with route table
+resource "aws_route_table_association" "private" {
+  count          = length(aws_subnet.private)
+  subnet_id      = aws_subnet.private[count.index].id
+  route_table_id = aws_route_table.main.id
 }
-
 
 # Create NAT gateway
 resource "aws_nat_gateway" "main" {
-  allocation_id = aws_eip.nat.id  # Reference the ID of the Elastic IP resource
+  
+  connectivity_type = "private"
   subnet_id     = aws_subnet.private[0].id  # Change to your desired private subnet ID
+  
 
   tags = {
     Name = "NATGateway"
@@ -68,12 +55,78 @@ resource "aws_route" "nat_gateway" {
   nat_gateway_id         = aws_nat_gateway.main.id
 }
 
-# Associate subnets with route table
-resource "aws_route_table_association" "private" {
-  count          = length(var.subnet_cidr_blocks)
-  subnet_id      = aws_subnet.private[0].id
-  route_table_id = aws_route_table.main.id
+#Create public subnet Newly Moved
+
+resource "aws_subnet" "public" {
+  vpc_id                       = aws_vpc.main.id
+  cidr_block                   = var.public_subnet_cidr
+  # add to variables.tf
+  availability_zone            = var.availability_zone_pub
+  map_public_ip_on_launch      = true
+
+  tags = {
+    Name = "New_Public_Subnet"
+  }
 }
+
+resource "aws_internet_gateway" "Igw" {
+ vpc_id = aws_vpc.main.id
+ 
+ tags = {
+   Name = "Public-Igw"
+   }
+ }
+
+ resource "aws_route_table" "Igw_route" {
+  vpc_id = aws_vpc.main.id
+
+
+  tags = {
+    Name = "Public_Igw"
+  }
+ }
+
+resource "aws_route" "Igw" {
+  route_table_id         = aws_route_table.Igw_route.id
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = aws_internet_gateway.Igw.id 
+}
+
+resource "aws_route_table_association" "Public_asso" {
+  subnet_id      = aws_subnet.public.id
+  route_table_id = aws_route_table.Igw_route.id
+  
+}
+
+###################################################
+
+
+
+
+
+# Create local route in route table
+# resource "aws_route" "local" {
+#   route_table_id         = aws_route_table.Local.id
+#   destination_cidr_block = aws_vpc.main.cidr_block
+#   gateway_id             = "local" 
+# }
+
+# resource "aws_route_table_association" "Local_Subnet" {
+#   subnet_id      = aws_subnet.private[count.index].id
+#   route_table_id = aws_route_table.Local.id
+  
+# }
+
+
+# resource "aws_eip" "nat" {
+#   vpc = true
+# }
+
+
+
+
+
+
 
 
 # resource "aws_vpc" "main" {
