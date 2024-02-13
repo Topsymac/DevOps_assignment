@@ -60,11 +60,11 @@ resource "aws_route" "nat_gateway" {
 resource "aws_subnet" "public" {
   vpc_id                       = aws_vpc.main.id
   cidr_block                   = var.public_subnet_cidr 
-  availability_zone            = var.availability_zone_pub
+  availability_zone            = var.availability_zone_public
   map_public_ip_on_launch      = true
 
   tags = {
-    Name = "New_Public_Subnet"
+    Name = "Public_Subnet"
   }
 }
 
@@ -72,7 +72,7 @@ resource "aws_internet_gateway" "Igw" {
  vpc_id = aws_vpc.main.id
  
  tags = {
-   Name = "Public-Igw"
+   Name = "Internet-Gateway"
    }
  }
 
@@ -81,7 +81,7 @@ resource "aws_internet_gateway" "Igw" {
 
 
   tags = {
-    Name = "Public_Igw"
+    Name = "RT-Internet_Gateway"
   }
  }
 

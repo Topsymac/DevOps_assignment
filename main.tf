@@ -7,7 +7,7 @@ module "vpc" {
   subnet_cidr_blocks       = ["10.0.1.0/24", "10.0.2.0/24"]  # Two private subnets
   availability_zones       = ["us-east-1a", "us-east-1b"]
   public_subnet_cidr       ="10.0.3.0/24"
-  availability_zone_pub    = "us-east-1c"
+  availability_zone_public    = "us-east-1c"
 }
 
 
